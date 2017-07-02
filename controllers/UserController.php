@@ -30,6 +30,7 @@ class UserController{
 		$password = $_REQUEST['password'];
 		$smscode = $_REQUEST['smscode'];
 		if(!is_numeric($phone) || strlen($phone) != 11 || $phone[0] != 1) Shared::outputJson(ILLEGAL_PARAMETER_CODE, ILLEGAL_PARAMETER_MESSAGE);
+		if(mb_strlen($nickname, 'UTF8') > MAX_NICKNAME_LEN) Shared::outputJson(ILLEGAL_PARAMETER_CODE, ILLEGAL_PARAMETER_MESSAGE);
 		if($sex == '男') $sex = 1;
 		else if($sex == '女') $sex = 0;
 		else Shared::outputJson(ILLEGAL_PARAMETER_CODE, ILLEGAL_PARAMETER_MESSAGE);
@@ -93,6 +94,7 @@ class UserController{
 		$id = $_REQUEST['id'];
 		$nickname = $_REQUEST['nickname'];
 		$sex = $_REQUEST['sex'];
+		if(mb_strlen($nickname, 'UTF8') > MAX_NICKNAME_LEN) Shared::outputJson(ILLEGAL_PARAMETER_CODE, ILLEGAL_PARAMETER_MESSAGE);
 		if($sex == '男') $sex = 1;
 		else if($sex == '女') $sex = 0;
 		else Shared::outputJson(ILLEGAL_PARAMETER_CODE, ILLEGAL_PARAMETER_MESSAGE);

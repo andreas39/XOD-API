@@ -42,10 +42,10 @@ class TaskController{
 		$price = $_REQUEST['price'];
 		session_start();
 		if(!isset($_SESSION['id']) || $id != $_SESSION['id']) Shared::outputJson(RANK_ERROR_CODE, RANK_ERROR_MESSAGE);
-		if(strlen($title) > MAX_TITLE_LENGTH) Shared::outputJson(ILLEGAL_PARAMETER_CODE, ILLEGAL_PARAMETER_MESSAGE);
-		if(strlen($content) > MAX_CONTENT_LENGTH) Shared::outputJson(ILLEGAL_PARAMETER_CODE, ILLEGAL_PARAMETER_MESSAGE);
+		if(mb_strlen($title, 'UTF8') > MAX_TITLE_LENGTH) Shared::outputJson(ILLEGAL_PARAMETER_CODE, ILLEGAL_PARAMETER_MESSAGE);
+		if(mb_strlen($content, 'UTF8') > MAX_CONTENT_LENGTH) Shared::outputJson(ILLEGAL_PARAMETER_CODE, ILLEGAL_PARAMETER_MESSAGE);
 		if(!is_numeric($price) || $price > MAX_PRICE || $price < 0) Shared::outputJson(ILLEGAL_PARAMETER_CODE, ILLEGAL_PARAMETER_MESSAGE);
-		if(Task::getNum("SELECT 1 FROM task WHERE id = '$id' WHERE task_status != 4") > MAX_SEND_TASK) Shared::outputJson(TASK_OVER_LIMIT_CODE, TASK_OVER_LIMIT_MESSAGE);
+		if(Task::getNum("SELECT 1 FROM task WHERE id = '$id' AND task_status != 4") >= MAX_SEND_TASK) Shared::outputJson(TASK_OVER_LIMIT_CODE, TASK_OVER_LIMIT_MESSAGE);
 		Task::add($id, $title, $content, $price);
 		Shared::outputJson(SUCCESS_CODE, SUCCESS_MESSAGE);
 	}
@@ -63,8 +63,8 @@ class TaskController{
 		if(Task::getNum("SELECT 1 FROM task WHERE task_status = 0 AND tid = '$tid'") != 1) Shared::outputJson(TASK_CAN_NOT_BE_MODIFIED_CODE, TASK_CAN_NOT_BE_MODIFIED_MESSAGE);
 		session_start();
 		if(!isset($_SESSION['id']) || $id != $_SESSION['id']) Shared::outputJson(RANK_ERROR_CODE, RANK_ERROR_MESSAGE);
-		if(strlen($title) > MAX_TITLE_LENGTH) Shared::outputJson(ILLEGAL_PARAMETER_CODE, ILLEGAL_PARAMETER_MESSAGE);
-		if(strlen($content) > MAX_CONTENT_LENGTH) Shared::outputJson(ILLEGAL_PARAMETER_CODE, ILLEGAL_PARAMETER_MESSAGE);
+		if(mb_strlen($title, 'UTF8') > MAX_TITLE_LENGTH) Shared::outputJson(ILLEGAL_PARAMETER_CODE, ILLEGAL_PARAMETER_MESSAGE);
+		if(mb_strlen($content, 'UTF8') > MAX_CONTENT_LENGTH) Shared::outputJson(ILLEGAL_PARAMETER_CODE, ILLEGAL_PARAMETER_MESSAGE);
 		if(!is_numeric($price) || $price > MAX_PRICE || $price < 0) Shared::outputJson(ILLEGAL_PARAMETER_CODE, ILLEGAL_PARAMETER_MESSAGE);
 		Task::modify($tid, $title, $content, $price);
 		Shared::outputJson(SUCCESS_CODE, SUCCESS_MESSAGE);
@@ -102,7 +102,7 @@ class TaskController{
 		session_start();
 		if(!isset($_SESSION['id']) || $_SESSION['id'] != $aid)
 			Shared::outputJson(RANK_ERROR_CODE, RANK_ERROR_MESSAGE);
-		if(Task::getNum("SELECT 1 FROM task WHERE aid = '$aid' AND task_status != 4") > MAX_RECEIVE_TASK) Shared::outputJson(TASK_OVER_LIMIT_CODE, TASK_OVER_LIMIT_MESSAGE);
+		if(Task::getNum("SELECT 1 FROM task WHERE aid = '$aid' AND task_status != 4") >= MAX_RECEIVE_TASK) Shared::outputJson(TASK_OVER_LIMIT_CODE, TASK_OVER_LIMIT_MESSAGE);
 		if(Task::getNum("SELECT 1 FROM task WHERE tid = '$tid' AND task_status = 0 AND id != '$aid'") == 1){
 			Task::status($tid, 1);
 			Task::receiver($tid, $aid);
